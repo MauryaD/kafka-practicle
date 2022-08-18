@@ -1,6 +1,6 @@
 package com.example.kafkapracticle.kafka;
 
-import com.example.kafkapracticle.entity.UserOrder;
+import com.example.kafkapracticle.entity.User;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -29,20 +29,23 @@ public class KafkaProducer {
         this.kafkaTemplate = kafkaTemplate;
     }
 
-    public void sendMessage(String message){
-        LOGGER.info(String.format("Message sent %s", message));
-        kafkaTemplate.send(topicName, message);
+    public String sendMessage(String userName){
+        LOGGER.info(String.format("Name sent %s", userName));
+        kafkaTemplate.send(topicName, "Hi " + userName + " Welcome to XYZ services");
+        return "Data Published!";
     }
 
-   public void sendMessage(UserOrder userOrder){
+   public String sendMessage(User userOrder){
 
         LOGGER.info(String.format("Message sent -> %s", userOrder.toString()));
 
-        Message<UserOrder> message = MessageBuilder
+        Message<User> message = MessageBuilder
                 .withPayload(userOrder)
                 .setHeader(KafkaHeaders.TOPIC, topicJsonName)
                 .build();
 
         kafkaTemplate.send(message);
+        kafkaTemplate.send(topicJsonName, "Hi" + userOrder.getName() + ", Welcome to Apache Kafka Demo.");
+        return "Data Published!";
     }
 }
